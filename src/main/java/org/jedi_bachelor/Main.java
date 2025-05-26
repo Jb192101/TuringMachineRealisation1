@@ -19,9 +19,9 @@ public class Main {
          */
 
         System.out.println(Arrays.toString(tape));
-
-        TuringMachine2 turingMachine2 = new TuringMachine2(6, tape, State.S0);
-        turingMachine2.addOperation();
-        System.out.println(Arrays.toString(turingMachine2.getTape()));
+		
+        TuringMachine turingMachine = new TuringMachine(6, tape, State.S0);
+        turingMachine.addOperation();
+        System.out.println(Arrays.toString(turingMachine.getTape()));
     }
 }
