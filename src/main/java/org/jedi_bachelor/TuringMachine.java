@@ -14,41 +14,139 @@ public class TuringMachine extends AbstractTuringMachine {
 
     @Override
     public void addOperation() {
-        boolean isComplete = false;
+        int countOfOperation = 0;
+        int isSecondS0 = 0;
 
-        while(!isComplete) {
-            if (this.state == State.S0) {
-                if(this.tape[controlHead] != Alphabet.M0 && controlHead != 0) {
-                    controlHead++;
-                } else if(this.tape[controlHead] == Alphabet.M0) {
-                    this.state = State.S1;
-                    controlHead--;
-                } else {
-                    isComplete = true;
-                }
-            } else { // Если состояние s1 - состояние переноса
-                switch(this.tape[controlHead]) {
+        State prevState = State.S0;
+        Alphabet prevAlpha = this.tape[controlHead];
+
+        while (isSecondS0 != 2) {
+            if (this.state == State.S0 && controlHead > 0) {
+                isSecondS0++;
+                System.out.println(isSecondS0);
+                switch (this.tape[controlHead]) {
                     case N0:
-                        this.tape[controlHead] = Alphabet.N1;
-                        this.state = State.S0;
-                        isComplete = true;
+                        prevAlpha = Alphabet.N0;
+                        prevState = this.state;
+
+                        controlHead++;
+                        this.state = State.S2;
+                        countOfOperation++;
+                        printTabuling("R", this.tape[controlHead], countOfOperation, prevState, prevAlpha);
                         break;
                     case N1:
-                        this.tape[controlHead] = Alphabet.N2;
-                        this.state = State.S0;
-                        isComplete = true;
+                        prevAlpha = Alphabet.N1;
+                        prevState = this.state;
+
+                        controlHead++;
+                        this.state = State.S2;
+                        countOfOperation++;
+                        printTabuling("R", this.tape[controlHead], countOfOperation, prevState, prevAlpha);
                         break;
                     case N2:
-                        this.tape[controlHead] = Alphabet.N0;
-                        controlHead--;
+                        prevAlpha = Alphabet.N2;
+                        prevState = this.state;
+
+                        controlHead++;
+                        this.state = State.S2;
+                        countOfOperation++;
+                        printTabuling("R", this.tape[controlHead], countOfOperation, prevState, prevAlpha);
                         break;
                     case M0:
-                        this.state = State.S0;
-                        isComplete = true;
+                        prevAlpha = Alphabet.M0;
+                        prevState = this.state;
+
+                        this.state = State.S1;
+                        controlHead--;
+                        countOfOperation++;
+                        printTabuling("L", this.tape[controlHead], countOfOperation, prevState, prevAlpha);
                         break;
                 }
-            }
+            } else if (this.state == State.S1) { // Если состояние s1 - состояние переноса
+                switch (this.tape[controlHead]) {
+                    case N0:
+                        prevAlpha = Alphabet.N0;
+                        prevState = this.state;
 
+                        this.tape[controlHead] = Alphabet.N1;
+                        this.state = State.S0;
+                        countOfOperation++;
+                        printTabuling("N", this.tape[controlHead], countOfOperation, prevState, prevAlpha);
+                        break;
+                    case N1:
+                        prevAlpha = Alphabet.N1;
+                        prevState = this.state;
+
+                        this.tape[controlHead] = Alphabet.N2;
+                        this.state = State.S0;
+                        countOfOperation++;
+                        printTabuling("N", this.tape[controlHead], countOfOperation, prevState, prevAlpha);
+                        break;
+                    case N2:
+                        prevAlpha = Alphabet.N2;
+                        prevState = this.state;
+
+                        this.tape[controlHead] = Alphabet.N0;
+                        controlHead--;
+                        countOfOperation++;
+                        printTabuling("L", this.tape[controlHead], countOfOperation, prevState, prevAlpha);
+                        break;
+                    case M0:
+                        prevAlpha = Alphabet.M0;
+                        prevState = this.state;
+
+                        this.tape[controlHead] = Alphabet.N1;
+                        this.state = State.S0;
+                        countOfOperation++;
+                        printTabuling("N", this.tape[controlHead], countOfOperation, prevState, prevAlpha);
+                        break;
+                }
+            } else if (this.state == State.S2) {
+                switch (this.tape[controlHead]) {
+                    case N0:
+                        prevAlpha = Alphabet.N0;
+                        prevState = this.state;
+
+                        this.controlHead++;
+                        countOfOperation++;
+                        printTabuling("R", this.tape[controlHead], countOfOperation, prevState, prevAlpha);
+                        break;
+                    case N1:
+                        prevAlpha = Alphabet.N1;
+                        prevState = this.state;
+
+                        this.controlHead++;
+                        countOfOperation++;
+                        printTabuling("R", this.tape[controlHead], countOfOperation, prevState, prevAlpha);
+                        break;
+                    case N2:
+                        prevAlpha = Alphabet.N2;
+                        prevState = this.state;
+
+                        this.controlHead++;
+                        countOfOperation++;
+                        printTabuling("R", this.tape[controlHead], countOfOperation, prevState, prevAlpha);
+                        break;
+                    case M0:
+                        prevAlpha = Alphabet.M0;
+                        prevState = this.state;
+
+                        this.state = State.S1;
+                        this.controlHead--;
+                        countOfOperation++;
+                        printTabuling("L", this.tape[controlHead], countOfOperation, prevState, prevAlpha);
+                        break;
+                }
+            } else {
+                break;
+            }
         }
+    }
+
+    private void printTabuling(String _shift, Alphabet _newA, int _countOfOp, State _state, Alphabet _alpha) {
+        System.out.println("T" + _countOfOp + ": " +
+        _alpha + "," + _state +
+                " -> "
+        + _newA + "," + _shift + "," + this.state);
     }
 }
